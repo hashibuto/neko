@@ -48,6 +48,7 @@ type PathToken struct {
 }
 
 type Route struct {
+	path       string
 	pathTokens []*PathToken
 	pathRegex  *regexp.Regexp
 	length     int
@@ -220,6 +221,7 @@ func (r *Router) AddRoute(routePath string, isPrefix bool) *Route {
 	}
 
 	route := &Route{
+		path:       routePath,
 		pathTokens: pathTokens,
 		pathRegex:  pathRegex,
 		length:     len(tokens),
