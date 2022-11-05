@@ -10,6 +10,7 @@ const VERSION = "v0.1.0"
 type Neko struct {
 	Server *http.Server
 
+	// These two are corelated by index
 	routePaths    []string
 	routeHandlers []Handler
 }
@@ -26,7 +27,8 @@ func NewServer(server *http.Server) (*Neko, error) {
 }
 
 func (n *Neko) AddRoute(routePath string, handler Handler) {
-
+	n.routePaths = append(n.routePaths, routePath)
+	n.routeHandlers = append(n.routeHandlers, handler)
 }
 
 // Serve initiates a blocking call which serves connections until interrupted

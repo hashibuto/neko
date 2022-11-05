@@ -18,15 +18,3 @@ func TestSpecifiedHandler(t *testing.T) {
 		t.Error("Expected an error to be returned when supplying a handler to the server object")
 	}
 }
-
-func TestServe(t *testing.T) {
-	s, err := NewServer(&http.Server{
-		Addr: "localhost:8888",
-	})
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	s.Serve()
-}
