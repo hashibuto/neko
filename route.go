@@ -48,12 +48,13 @@ type PathToken struct {
 }
 
 type Route struct {
-	path       string
-	pathTokens []*PathToken
-	pathRegex  *regexp.Regexp
-	length     int
-	handler    map[string]Handler
-	router     *Router
+	path        string
+	pathTokens  []*PathToken
+	pathRegex   *regexp.Regexp
+	length      int
+	handler     map[string]Handler
+	router      *Router
+	middlewares []Middleware
 }
 
 func (rt *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) error {
@@ -69,31 +70,47 @@ func (rt *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) error {
 	return handler.ServeHTTP(w, r)
 }
 
+func (rt *Route) Middleware(middlewares ...Middleware) *Route {
+	if len(rt.handler) > 0 {
+		panic("Middlewares must be added prior to adding handlers")
+	}
+
+	rt.middlewares = append(rt.middlewares, middlewares...)
+
+	return rt
+}
+
 func (rt *Route) HandlerFunc(handlerFunc HandlerFunc, methods ...string) *Route {
+	allMiddlewares := []Middleware{}
+	allMiddlewares = append(allMiddlewares, rt.middlewares...)
+	allMiddlewares = append(allMiddlewares, rt.router.middlewares...)
 	if len(methods) == 0 {
-		rt.handler["*"] = Cascade(MakeHandler(handlerFunc), rt.router.middlewares...)
+		rt.handler["*"] = Cascade(MakeHandler(handlerFunc), allMiddlewares...)
 	}
 	for _, method := range methods {
 		_, ok := validMethods[method]
 		if !ok {
 			panic(fmt.Sprintf("\"%s\" is not a valid http method", method))
 		}
-		rt.handler[method] = Cascade(MakeHandler(handlerFunc), rt.router.middlewares...)
+		rt.handler[method] = Cascade(MakeHandler(handlerFunc), allMiddlewares...)
 	}
 
 	return rt
 }
 
 func (rt *Route) Handler(handler Handler, methods ...string) *Route {
+	allMiddlewares := []Middleware{}
+	allMiddlewares = append(allMiddlewares, rt.middlewares...)
+	allMiddlewares = append(allMiddlewares, rt.router.middlewares...)
 	if len(methods) == 0 {
-		rt.handler["*"] = Cascade(handler, rt.router.middlewares...)
+		rt.handler["*"] = Cascade(handler, allMiddlewares...)
 	}
 	for _, method := range methods {
 		_, ok := validMethods[method]
 		if !ok {
 			panic(fmt.Sprintf("\"%s\" is not a valid http method", method))
 		}
-		rt.handler[method] = Cascade(handler, rt.router.middlewares...)
+		rt.handler[method] = Cascade(handler, allMiddlewares...)
 	}
 
 	return rt
@@ -221,12 +238,13 @@ func (r *Router) AddRoute(routePath string, isPrefix bool) *Route {
 	}
 
 	route := &Route{
-		path:       routePath,
-		pathTokens: pathTokens,
-		pathRegex:  pathRegex,
-		length:     len(tokens),
-		handler:    map[string]Handler{},
-		router:     r,
+		path:        routePath,
+		pathTokens:  pathTokens,
+		pathRegex:   pathRegex,
+		length:      len(tokens),
+		handler:     map[string]Handler{},
+		router:      r,
+		middlewares: []Middleware{},
 	}
 	r.routes = append(r.routes, route)
 
