@@ -18,6 +18,8 @@ jobs:
         fetch-depth: 0
 
     - uses: actions/setup-go@v3
+      with:
+        go-version: '^1.19.0'
 
     - name: Update PATH variable
       run: echo "$HOME/go/bin" >> $GITHUB_PATH
