@@ -9,10 +9,10 @@ import "github.com/hashibuto/neko"
 ## Index
 
 - [Constants](<#constants>)
+- [func ParsePathTokens(r *http.Request) map[string]any](<#func-parsepathtokens>)
 - [type Handler](<#type-handler>)
   - [func Cascade(finalHandler Handler, middlewares ...Middleware) Handler](<#func-cascade>)
   - [func MakeHandler(hf HandlerFunc) Handler](<#func-makehandler>)
-  - [func RequestLogger(next Handler) Handler](<#func-requestlogger>)
 - [type HandlerFunc](<#type-handlerfunc>)
 - [type HandlerStruct](<#type-handlerstruct>)
   - [func (hs *HandlerStruct) ServeHTTP(w http.ResponseWriter, r *http.Request) error](<#func-handlerstruct-servehttp>)
@@ -29,6 +29,7 @@ import "github.com/hashibuto/neko"
   - [func NewResponseWriter(w http.ResponseWriter) *ResponseWriter](<#func-newresponsewriter>)
   - [func (rw *ResponseWriter) StatusCode() int](<#func-responsewriter-statuscode>)
   - [func (rw *ResponseWriter) WriteHeader(statusCode int)](<#func-responsewriter-writeheader>)
+  - [func (rw *ResponseWriter) WroteHeader() bool](<#func-responsewriter-wroteheader>)
 - [type Route](<#type-route>)
   - [func (rt *Route) Handler(handler Handler, methods ...string) *Route](<#func-route-handler>)
   - [func (rt *Route) HandlerFunc(handlerFunc HandlerFunc, methods ...string) *Route](<#func-route-handlerfunc>)
@@ -53,6 +54,12 @@ import "github.com/hashibuto/neko"
 const VERSION = "v0.1.0"
 ```
 
+## func [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/utils.go#L9>)
+
+```go
+func ParsePathTokens(r *http.Request) map[string]any
+```
+
 ## type [Handler](<https://github.com/hashibuto/neko/blob/master/handler.go#L6-L8>)
 
 ```go
@@ -71,12 +78,6 @@ func Cascade(finalHandler Handler, middlewares ...Middleware) Handler
 
 ```go
 func MakeHandler(hf HandlerFunc) Handler
-```
-
-### func [RequestLogger](<https://github.com/hashibuto/neko/blob/master/logging-middleware.go#L10>)
-
-```go
-func RequestLogger(next Handler) Handler
 ```
 
 ## type [HandlerFunc](<https://github.com/hashibuto/neko/blob/master/handler.go#L5>)
@@ -99,13 +100,13 @@ type HandlerStruct struct {
 func (hs *HandlerStruct) ServeHTTP(w http.ResponseWriter, r *http.Request) error
 ```
 
-## type [Middleware](<https://github.com/hashibuto/neko/blob/master/neko.go#L13>)
+## type [Middleware](<https://github.com/hashibuto/neko/blob/master/neko.go#L16>)
 
 ```go
 type Middleware func(next Handler) Handler
 ```
 
-## type [Neko](<https://github.com/hashibuto/neko/blob/master/neko.go#L15-L19>)
+## type [Neko](<https://github.com/hashibuto/neko/blob/master/neko.go#L18-L22>)
 
 ```go
 type Neko struct {
@@ -114,7 +115,7 @@ type Neko struct {
 }
 ```
 
-### func [NewServer](<https://github.com/hashibuto/neko/blob/master/neko.go#L22>)
+### func [NewServer](<https://github.com/hashibuto/neko/blob/master/neko.go#L25>)
 
 ```go
 func NewServer(server *http.Server) (*Neko, error)
@@ -122,7 +123,7 @@ func NewServer(server *http.Server) (*Neko, error)
 
 NewServer returns a new Neko instance
 
-### func \(\*Neko\) [Route](<https://github.com/hashibuto/neko/blob/master/neko.go#L44>)
+### func \(\*Neko\) [Route](<https://github.com/hashibuto/neko/blob/master/neko.go#L47>)
 
 ```go
 func (n *Neko) Route(routePath string) *Route
@@ -130,7 +131,7 @@ func (n *Neko) Route(routePath string) *Route
 
 Route adds a complete match route to the server, route matching is independent of the order in which the route was added
 
-### func \(\*Neko\) [RoutePrefix](<https://github.com/hashibuto/neko/blob/master/neko.go#L50>)
+### func \(\*Neko\) [RoutePrefix](<https://github.com/hashibuto/neko/blob/master/neko.go#L53>)
 
 ```go
 func (n *Neko) RoutePrefix(routePath string) *Route
@@ -138,7 +139,7 @@ func (n *Neko) RoutePrefix(routePath string) *Route
 
 RoutePrefix adds a prefix match route to the server, route matching is independent of the order in which the route was added
 
-### func \(\*Neko\) [Serve](<https://github.com/hashibuto/neko/blob/master/neko.go#L55>)
+### func \(\*Neko\) [Serve](<https://github.com/hashibuto/neko/blob/master/neko.go#L58>)
 
 ```go
 func (n *Neko) Serve() error
@@ -146,13 +147,13 @@ func (n *Neko) Serve() error
 
 Serve initiates a blocking call which serves connections until interrupted
 
-### func \(\*Neko\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/neko.go#L61>)
+### func \(\*Neko\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/neko.go#L64>)
 
 ```go
 func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request)
 ```
 
-### func \(\*Neko\) [Use](<https://github.com/hashibuto/neko/blob/master/neko.go#L38>)
+### func \(\*Neko\) [Use](<https://github.com/hashibuto/neko/blob/master/neko.go#L41>)
 
 ```go
 func (n *Neko) Use(mw Middleware)
@@ -195,6 +196,12 @@ func (rw *ResponseWriter) StatusCode() int
 
 ```go
 func (rw *ResponseWriter) WriteHeader(statusCode int)
+```
+
+### func \(\*ResponseWriter\) [WroteHeader](<https://github.com/hashibuto/neko/blob/master/response-writer.go#L31>)
+
+```go
+func (rw *ResponseWriter) WroteHeader() bool
 ```
 
 ## type [Route](<https://github.com/hashibuto/neko/blob/master/route.go#L50-L58>)

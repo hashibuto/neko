@@ -1,21 +1,23 @@
-package neko
+package middleware
 
 import (
 	"errors"
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/hashibuto/neko"
 )
 
-func RequestLogger(next Handler) Handler {
-	return MakeHandler(func(w http.ResponseWriter, r *http.Request) error {
+func RequestLogger(next neko.Handler) neko.Handler {
+	return neko.MakeHandler(func(w http.ResponseWriter, r *http.Request) error {
 		now := time.Now().UTC()
 		fmt.Printf("%s - %s %s\n", now.Format(time.RFC3339Nano), r.Method, r.URL.Path)
 		err := next.ServeHTTP(w, r)
-		rw := w.(*ResponseWriter)
+		rw := w.(*neko.ResponseWriter)
 		var statusCode int
-		var se *StatusErr
-		if rw.wroteHeader {
+		var se *neko.StatusErr
+		if rw.WroteHeader() {
 			statusCode = rw.StatusCode()
 		} else if err != nil {
 			if errors.As(err, &se) {

@@ -29,7 +29,9 @@ func TestSpecifiedHandler(t *testing.T) {
 // 	}
 
 // 	s.Use(RequestLogger)
-// 	s.Route("/v1/test").HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+// 	s.Route("/v1/test/{id:int}").HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+// 		mapping := ParsePathTokens(r)
+// 		fmt.Println(mapping)
 // 		return NewStatusErrf(201, "hello")
 // 	})
 

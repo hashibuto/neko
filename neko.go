@@ -1,6 +1,7 @@
 package neko
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -9,6 +10,8 @@ import (
 const VERSION = "v0.1.0"
 
 var statusErr = &StatusErr{}
+
+const routeKey = "nekoRouteKey"
 
 type Middleware func(next Handler) Handler
 
@@ -65,8 +68,7 @@ func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respWriter := NewResponseWriter(w)
-	err := route.ServeHTTP(respWriter, r)
+	err := route.ServeHTTP(NewResponseWriter(w), r.WithContext(context.WithValue(r.Context(), routeKey, route)))
 	if err != nil {
 		var sErr *StatusErr
 		if errors.As(err, &sErr) {

@@ -19,15 +19,15 @@ var validTypeStrings = map[string]reflect.Kind{
 	"string": reflect.String,
 }
 var validMethods = map[string]struct{}{
-	http.MethodGet:     struct{}{},
-	http.MethodHead:    struct{}{},
-	http.MethodPost:    struct{}{},
-	http.MethodPut:     struct{}{},
-	http.MethodPatch:   struct{}{},
-	http.MethodDelete:  struct{}{},
-	http.MethodConnect: struct{}{},
-	http.MethodOptions: struct{}{},
-	http.MethodTrace:   struct{}{},
+	http.MethodGet:     {},
+	http.MethodHead:    {},
+	http.MethodPost:    {},
+	http.MethodPut:     {},
+	http.MethodPatch:   {},
+	http.MethodDelete:  {},
+	http.MethodConnect: {},
+	http.MethodOptions: {},
+	http.MethodTrace:   {},
 }
 var reEscapeChars = map[byte]string{
 	'-': "\\-",
@@ -222,7 +222,7 @@ func (r *Router) AddRoute(routePath string, isPrefix bool) *Route {
 	}
 	regexSafeRoutePath := b.String()
 
-	pathRegexStr := "^" + pathTokenReplacer.ReplaceAllString(regexSafeRoutePath, "[^/]+")
+	pathRegexStr := "^" + pathTokenReplacer.ReplaceAllString(regexSafeRoutePath, "([^/]+)")
 	if !isPrefix {
 		pathRegexStr = pathRegexStr + "$"
 	}
