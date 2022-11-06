@@ -1,6 +1,7 @@
 package neko
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 )
@@ -89,6 +90,59 @@ func TestRouterMatch(t *testing.T) {
 	route = router.FindMatch("/static/domino.txt")
 	if route == nil {
 		t.Error("Expected a match")
+		return
+	}
+}
+
+func TestMiddleware(t *testing.T) {
+	stack := []string{}
+
+	var firstMid = func(next Handler) Handler {
+		return MakeHandler(func(w http.ResponseWriter, r *http.Request) error {
+			stack = append(stack, "firstBefore")
+			err := next.ServeHTTP(w, r)
+			if err != nil {
+				stack = append(stack, "firstAfterErr")
+			} else {
+				stack = append(stack, "firstAfter")
+			}
+
+			return err
+		})
+	}
+
+	var secondMid = func(next Handler) Handler {
+		return MakeHandler(func(w http.ResponseWriter, r *http.Request) error {
+			stack = append(stack, "secondBefore")
+			err := next.ServeHTTP(w, r)
+			if err != nil {
+				stack = append(stack, "secondAfterErr")
+			} else {
+				stack = append(stack, "secondAfter")
+			}
+
+			return fmt.Errorf("an error")
+		})
+	}
+
+	var myHandler = func(w http.ResponseWriter, r *http.Request) error {
+		stack = append(stack, "mainHandler")
+		return nil
+	}
+
+	router := NewRouter()
+	route := router.AddRoute("/v1/test", false).Middleware(firstMid, secondMid).HandlerFunc(myHandler, "GET", "POST")
+	route.ServeHTTP(nil, &http.Request{
+		Method: "POST",
+	})
+
+	if len(stack) != 5 {
+		t.Error("Stack length is incorrect")
+		return
+	}
+
+	if stack[0] != "firstBefore" || stack[1] != "secondBefore" || stack[2] != "mainHandler" || stack[3] != "secondAfter" || stack[4] != "firstAfterErr" {
+		t.Error("Stack is incorrect")
 		return
 	}
 }
