@@ -28,7 +28,7 @@ func TestSpecifiedHandler(t *testing.T) {
 // 		return
 // 	}
 
-// 	s.Use(RequestLogger)
+// 	//s.Use(middleware.RequestLogger)
 // 	s.Route("/v1/test/{id:int}").HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 // 		mapping := ParsePathTokens(r)
 // 		fmt.Println(mapping)

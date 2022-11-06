@@ -16,8 +16,6 @@ func PanicRecovery(next neko.Handler) neko.Handler {
 			}
 		}()
 
-		err := next.ServeHTTP(w, r)
-
-		return err
+		return next.ServeHTTP(w, r)
 	})
 }
