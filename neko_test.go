@@ -1,7 +1,6 @@
 package neko
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 )
@@ -20,21 +19,21 @@ func TestSpecifiedHandler(t *testing.T) {
 	}
 }
 
-func TestServe(t *testing.T) {
-	s, err := NewServer(&http.Server{
-		Addr: "localhost:8888",
-	})
-	if err != nil {
-		t.Error(err)
-		return
-	}
+// func TestServe(t *testing.T) {
+// 	s, err := NewServer(&http.Server{
+// 		Addr: "localhost:8888",
+// 	})
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
 
-	//s.Use(middleware.RequestLogger)
-	s.Route("/v1/test/{id:int}").HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-		mapping := ParsePathTokens(r)
-		fmt.Println(mapping)
-		return NewStatusErrf(201, "hello")
-	})
+// 	//s.Use(middleware.RequestLogger)
+// 	s.Route("/v1/test/{id:int}").HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+// 		mapping := ParsePathTokens(r)
+// 		fmt.Println(mapping)
+// 		return NewStatusErrf(201, "hello")
+// 	})
 
-	s.Serve()
-}
+// 	s.Serve()
+// }
