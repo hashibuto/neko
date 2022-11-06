@@ -27,3 +27,7 @@ func (rw *ResponseWriter) WriteHeader(statusCode int) {
 func (rw *ResponseWriter) StatusCode() int {
 	return rw.statusCode
 }
+
+func (rw *ResponseWriter) WroteHeader() bool {
+	return rw.wroteHeader
+}
