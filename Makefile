@@ -12,3 +12,6 @@ check-docs: install-tools
 
 install-tools:
 	go install github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest
+
+test:
+	go test
