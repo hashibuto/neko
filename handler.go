@@ -23,6 +23,10 @@ func MakeHandler(hf HandlerFunc) Handler {
 
 func Cascade(finalHandler Handler, middlewares ...Middleware) Handler {
 	var curHandler Handler
+	if len(middlewares) == 0 {
+		curHandler = finalHandler
+	}
+
 	for i := range middlewares {
 		// Reverse select
 		curIndex := len(middlewares) - i - 1
