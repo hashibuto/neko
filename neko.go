@@ -2,12 +2,14 @@ package neko
 
 import (
 	"context"
+	_ "embed"
 	"errors"
 	"fmt"
 	"net/http"
 )
 
-const VERSION = "v0.1.0"
+//go:embed VERSION
+var VERSION string
 
 var statusErr = &StatusErr{}
 

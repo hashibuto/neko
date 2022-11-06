@@ -8,7 +8,9 @@ import "github.com/hashibuto/neko"
 
 ## Index
 
-- [Constants](<#constants>)
+- [Variables](<#variables>)
+- [func GetStatusCode(w http.ResponseWriter, err error) int](<#func-getstatuscode>)
+- [func IsResponseError(w http.ResponseWriter, err error) bool](<#func-isresponseerror>)
 - [func ParsePathTokens(r *http.Request) map[string]any](<#func-parsepathtokens>)
 - [type Handler](<#type-handler>)
   - [func Cascade(finalHandler Handler, middlewares ...Middleware) Handler](<#func-cascade>)
@@ -48,13 +50,29 @@ import "github.com/hashibuto/neko"
   - [func (se *StatusErr) Error() string](<#func-statuserr-error>)
 
 
-## Constants
+## Variables
 
 ```go
-const VERSION = "v0.1.0"
+var VERSION string
 ```
 
-## func [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/utils.go#L9>)
+## func [GetStatusCode](<https://github.com/hashibuto/neko/blob/master/utils.go#L31>)
+
+```go
+func GetStatusCode(w http.ResponseWriter, err error) int
+```
+
+GetStatusCode returns the response status code to the present moment in time
+
+## func [IsResponseError](<https://github.com/hashibuto/neko/blob/master/utils.go#L50>)
+
+```go
+func IsResponseError(w http.ResponseWriter, err error) bool
+```
+
+IsResponseError returns the state of the application response with respect to error at the present time
+
+## func [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/utils.go#L10>)
 
 ```go
 func ParsePathTokens(r *http.Request) map[string]any
@@ -100,13 +118,13 @@ type HandlerStruct struct {
 func (hs *HandlerStruct) ServeHTTP(w http.ResponseWriter, r *http.Request) error
 ```
 
-## type [Middleware](<https://github.com/hashibuto/neko/blob/master/neko.go#L16>)
+## type [Middleware](<https://github.com/hashibuto/neko/blob/master/neko.go#L18>)
 
 ```go
 type Middleware func(next Handler) Handler
 ```
 
-## type [Neko](<https://github.com/hashibuto/neko/blob/master/neko.go#L18-L22>)
+## type [Neko](<https://github.com/hashibuto/neko/blob/master/neko.go#L20-L24>)
 
 ```go
 type Neko struct {
@@ -115,7 +133,7 @@ type Neko struct {
 }
 ```
 
-### func [NewServer](<https://github.com/hashibuto/neko/blob/master/neko.go#L25>)
+### func [NewServer](<https://github.com/hashibuto/neko/blob/master/neko.go#L27>)
 
 ```go
 func NewServer(server *http.Server) (*Neko, error)
@@ -123,7 +141,7 @@ func NewServer(server *http.Server) (*Neko, error)
 
 NewServer returns a new Neko instance
 
-### func \(\*Neko\) [Route](<https://github.com/hashibuto/neko/blob/master/neko.go#L47>)
+### func \(\*Neko\) [Route](<https://github.com/hashibuto/neko/blob/master/neko.go#L49>)
 
 ```go
 func (n *Neko) Route(routePath string) *Route
@@ -131,7 +149,7 @@ func (n *Neko) Route(routePath string) *Route
 
 Route adds a complete match route to the server, route matching is independent of the order in which the route was added
 
-### func \(\*Neko\) [RoutePrefix](<https://github.com/hashibuto/neko/blob/master/neko.go#L53>)
+### func \(\*Neko\) [RoutePrefix](<https://github.com/hashibuto/neko/blob/master/neko.go#L55>)
 
 ```go
 func (n *Neko) RoutePrefix(routePath string) *Route
@@ -139,7 +157,7 @@ func (n *Neko) RoutePrefix(routePath string) *Route
 
 RoutePrefix adds a prefix match route to the server, route matching is independent of the order in which the route was added
 
-### func \(\*Neko\) [Serve](<https://github.com/hashibuto/neko/blob/master/neko.go#L58>)
+### func \(\*Neko\) [Serve](<https://github.com/hashibuto/neko/blob/master/neko.go#L60>)
 
 ```go
 func (n *Neko) Serve() error
@@ -147,13 +165,13 @@ func (n *Neko) Serve() error
 
 Serve initiates a blocking call which serves connections until interrupted
 
-### func \(\*Neko\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/neko.go#L64>)
+### func \(\*Neko\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/neko.go#L66>)
 
 ```go
 func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request)
 ```
 
-### func \(\*Neko\) [Use](<https://github.com/hashibuto/neko/blob/master/neko.go#L41>)
+### func \(\*Neko\) [Use](<https://github.com/hashibuto/neko/blob/master/neko.go#L43>)
 
 ```go
 func (n *Neko) Use(mw Middleware)
