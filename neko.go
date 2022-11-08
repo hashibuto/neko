@@ -15,6 +15,8 @@ var statusErr = &StatusErr{}
 
 const routeKey = "nekoRouteKey"
 
+const nekoBanner = " _ __   ___| | _____  \n| '_ \\ / _ \\ |/ / _ \\ \n| | | |  __/   < (_) |\n|_| |_|\\___|_|\\_\\___/"
+
 type Middleware func(next Handler) Handler
 
 type Neko struct {
@@ -58,9 +60,16 @@ func (n *Neko) RoutePrefix(routePath string) *Route {
 
 // Serve initiates a blocking call which serves connections until interrupted
 func (n *Neko) Serve() error {
-	fmt.Printf(" _ __   ___| | _____  \n| '_ \\ / _ \\ |/ / _ \\ \n| | | |  __/   < (_) |\n|_| |_|\\___|_|\\_\\___/  %s\n\n", VERSION)
+	fmt.Printf("%s  %s\n\n", nekoBanner, VERSION)
 	fmt.Printf("Listening @%s\n", n.Server.Addr)
 	return n.Server.ListenAndServe()
+}
+
+// ServeTLS initiates a blocking call which serves connections over TLS until interrupted
+func (n *Neko) ServeTLS(certFile string, keyFile string) error {
+	fmt.Printf("%s  %s\n\n", nekoBanner, VERSION)
+	fmt.Printf("Listening (TLS) @%s\n", n.Server.Addr)
+	return n.Server.ListenAndServeTLS(certFile, keyFile)
 }
 
 func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request) {
