@@ -12,7 +12,7 @@ func PanicRecovery(next neko.Handler) neko.Handler {
 		defer func() {
 			err := recover()
 			if err != nil {
-				fmt.Printf("Recovered from panic\n%v", err)
+				fmt.Printf("Recovered from panic\n%v\n", err)
 			}
 		}()
 

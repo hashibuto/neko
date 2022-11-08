@@ -87,6 +87,8 @@ func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		} else {
 			w.WriteHeader(500)
 		}
-
+		return
 	}
+
+	w.WriteHeader(200)
 }
