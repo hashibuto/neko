@@ -14,6 +14,7 @@ func PanicRecovery(next neko.Handler) neko.Handler {
 			err := recover()
 			if err != nil {
 				fmt.Printf("Recovered from panic\n%v\n%s\n", err, debug.Stack())
+				w.WriteHeader(500)
 			}
 		}()
 
