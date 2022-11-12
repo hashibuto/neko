@@ -3,6 +3,7 @@ package middleware
 import (
 	"fmt"
 	"net/http"
+	"runtime/debug"
 
 	"github.com/hashibuto/neko"
 )
@@ -12,7 +13,7 @@ func PanicRecovery(next neko.Handler) neko.Handler {
 		defer func() {
 			err := recover()
 			if err != nil {
-				fmt.Printf("Recovered from panic\n%v\n", err)
+				fmt.Printf("Recovered from panic\n%v\n%s\n", err, debug.Stack())
 			}
 		}()
 
