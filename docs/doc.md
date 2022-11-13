@@ -37,6 +37,7 @@ import "github.com/hashibuto/neko"
   - [func (rt *Route) Handler(handler Handler, methods ...string) *Route](<#func-route-handler>)
   - [func (rt *Route) HandlerFunc(handlerFunc HandlerFunc, methods ...string) *Route](<#func-route-handlerfunc>)
   - [func (rt *Route) Middleware(middlewares ...Middleware) *Route](<#func-route-middleware>)
+  - [func (rt *Route) ParsePathTokens(path string) map[string]any](<#func-route-parsepathtokens>)
   - [func (rt *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) error](<#func-route-servehttp>)
 - [type Router](<#type-router>)
   - [func NewRouter() *Router](<#func-newrouter>)
@@ -57,7 +58,7 @@ import "github.com/hashibuto/neko"
 var VERSION string
 ```
 
-## func [GetStatusCode](<https://github.com/hashibuto/neko/blob/master/utils.go#L31>)
+## func [GetStatusCode](<https://github.com/hashibuto/neko/blob/master/utils.go#L15>)
 
 ```go
 func GetStatusCode(w http.ResponseWriter, err error) int
@@ -65,7 +66,7 @@ func GetStatusCode(w http.ResponseWriter, err error) int
 
 GetStatusCode returns the response status code to the present moment in time
 
-## func [IsResponseError](<https://github.com/hashibuto/neko/blob/master/utils.go#L50>)
+## func [IsResponseError](<https://github.com/hashibuto/neko/blob/master/utils.go#L34>)
 
 ```go
 func IsResponseError(w http.ResponseWriter, err error) bool
@@ -73,7 +74,7 @@ func IsResponseError(w http.ResponseWriter, err error) bool
 
 IsResponseError returns the state of the application response with respect to error at the present time
 
-## func [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/utils.go#L10>)
+## func [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/utils.go#L8>)
 
 ```go
 func ParsePathTokens(r *http.Request) map[string]any
@@ -188,7 +189,7 @@ func (n *Neko) Use(mw Middleware)
 
 Use applies the target middleware to all routes added after invocation of the command.  Routes added prior to invoking "Use" will not invoke the middleware.
 
-## type [PathToken](<https://github.com/hashibuto/neko/blob/master/route.go#L45-L48>)
+## type [PathToken](<https://github.com/hashibuto/neko/blob/master/route.go#L46-L49>)
 
 ```go
 type PathToken struct {
@@ -231,7 +232,7 @@ func (rw *ResponseWriter) WriteHeader(statusCode int)
 func (rw *ResponseWriter) WroteHeader() bool
 ```
 
-## type [Route](<https://github.com/hashibuto/neko/blob/master/route.go#L50-L58>)
+## type [Route](<https://github.com/hashibuto/neko/blob/master/route.go#L51-L59>)
 
 ```go
 type Route struct {
@@ -239,31 +240,37 @@ type Route struct {
 }
 ```
 
-### func \(\*Route\) [Handler](<https://github.com/hashibuto/neko/blob/master/route.go#L101>)
+### func \(\*Route\) [Handler](<https://github.com/hashibuto/neko/blob/master/route.go#L120>)
 
 ```go
 func (rt *Route) Handler(handler Handler, methods ...string) *Route
 ```
 
-### func \(\*Route\) [HandlerFunc](<https://github.com/hashibuto/neko/blob/master/route.go#L83>)
+### func \(\*Route\) [HandlerFunc](<https://github.com/hashibuto/neko/blob/master/route.go#L102>)
 
 ```go
 func (rt *Route) HandlerFunc(handlerFunc HandlerFunc, methods ...string) *Route
 ```
 
-### func \(\*Route\) [Middleware](<https://github.com/hashibuto/neko/blob/master/route.go#L73>)
+### func \(\*Route\) [Middleware](<https://github.com/hashibuto/neko/blob/master/route.go#L74>)
 
 ```go
 func (rt *Route) Middleware(middlewares ...Middleware) *Route
 ```
 
-### func \(\*Route\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/route.go#L60>)
+### func \(\*Route\) [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/route.go#L84>)
+
+```go
+func (rt *Route) ParsePathTokens(path string) map[string]any
+```
+
+### func \(\*Route\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/route.go#L61>)
 
 ```go
 func (rt *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) error
 ```
 
-## type [Router](<https://github.com/hashibuto/neko/blob/master/route.go#L119-L123>)
+## type [Router](<https://github.com/hashibuto/neko/blob/master/route.go#L138-L142>)
 
 ```go
 type Router struct {
@@ -271,25 +278,25 @@ type Router struct {
 }
 ```
 
-### func [NewRouter](<https://github.com/hashibuto/neko/blob/master/route.go#L156>)
+### func [NewRouter](<https://github.com/hashibuto/neko/blob/master/route.go#L175>)
 
 ```go
 func NewRouter() *Router
 ```
 
-### func \(\*Router\) [AddMiddleware](<https://github.com/hashibuto/neko/blob/master/route.go#L164>)
+### func \(\*Router\) [AddMiddleware](<https://github.com/hashibuto/neko/blob/master/route.go#L183>)
 
 ```go
 func (r *Router) AddMiddleware(mw Middleware)
 ```
 
-### func \(\*Router\) [AddRoute](<https://github.com/hashibuto/neko/blob/master/route.go#L168>)
+### func \(\*Router\) [AddRoute](<https://github.com/hashibuto/neko/blob/master/route.go#L187>)
 
 ```go
 func (r *Router) AddRoute(routePath string, isPrefix bool) *Route
 ```
 
-### func \(\*Router\) [FindMatch](<https://github.com/hashibuto/neko/blob/master/route.go#L272>)
+### func \(\*Router\) [FindMatch](<https://github.com/hashibuto/neko/blob/master/route.go#L291>)
 
 ```go
 func (r *Router) FindMatch(candidate string) *Route
@@ -297,7 +304,7 @@ func (r *Router) FindMatch(candidate string) *Route
 
 FindMatch looks through the routing entries for the most specific match against the candidate.  If a match cannot be established then nil is returned
 
-## type [RouterNode](<https://github.com/hashibuto/neko/blob/master/route.go#L125-L128>)
+## type [RouterNode](<https://github.com/hashibuto/neko/blob/master/route.go#L144-L147>)
 
 ```go
 type RouterNode struct {
@@ -305,13 +312,13 @@ type RouterNode struct {
 }
 ```
 
-### func [NewRouterNode](<https://github.com/hashibuto/neko/blob/master/route.go#L149>)
+### func [NewRouterNode](<https://github.com/hashibuto/neko/blob/master/route.go#L168>)
 
 ```go
 func NewRouterNode() *RouterNode
 ```
 
-### func \(\*RouterNode\) [FindMatches](<https://github.com/hashibuto/neko/blob/master/route.go#L130>)
+### func \(\*RouterNode\) [FindMatches](<https://github.com/hashibuto/neko/blob/master/route.go#L149>)
 
 ```go
 func (rn *RouterNode) FindMatches(tokens []string, matches []*Route) []*Route
