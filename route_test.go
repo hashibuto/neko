@@ -146,3 +146,43 @@ func TestMiddleware(t *testing.T) {
 		return
 	}
 }
+
+func TestRouterMatchDeeperMatch(t *testing.T) {
+	router := NewRouter()
+	router.AddRoute("/v1/api/something/{id}", false).HandlerFunc(DummyHandlerFunc, "GET", "POST")
+	router.AddRoute("/v1/api/something/{id}/{thing}", false).HandlerFunc(DummyHandlerFunc, "GET", "POST")
+
+	path := "/v1/api/something/123"
+	route := router.FindMatch(path)
+	if route == nil {
+		t.Error("Expected a route match")
+		return
+	}
+
+	if route.path != "/v1/api/something/{id}" {
+		t.Errorf("Got incorrect match on %s", route.path)
+		return
+	}
+
+	tokens := route.ParsePathTokens(path)
+	if tokens["id"] != "123" {
+		t.Error("Incorrect value for id token")
+		return
+	}
+	if tokens["thing"] != nil {
+		t.Error("Incorrect value for thing token")
+		return
+	}
+
+	path = "/v1/api/something/123/456"
+	route = router.FindMatch(path)
+	if route == nil {
+		t.Error("Expected a route match")
+		return
+	}
+
+	if route.path != "/v1/api/something/{id}/{thing}" {
+		t.Errorf("Got incorrect match on %s", route.path)
+		return
+	}
+}
