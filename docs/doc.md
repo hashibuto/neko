@@ -26,6 +26,7 @@ import "github.com/hashibuto/neko"
   - [func (n *Neko) Serve() error](<#func-neko-serve>)
   - [func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request)](<#func-neko-servehttp>)
   - [func (n *Neko) ServeTLS(certFile string, keyFile string) error](<#func-neko-servetls>)
+  - [func (n *Neko) UnwrapStatusError(err error) *StatusErr](<#func-neko-unwrapstatuserror>)
   - [func (n *Neko) Use(mw Middleware)](<#func-neko-use>)
 - [type PathToken](<#type-pathtoken>)
 - [type ResponseWriter](<#type-responsewriter>)
@@ -120,13 +121,13 @@ type HandlerStruct struct {
 func (hs *HandlerStruct) ServeHTTP(w http.ResponseWriter, r *http.Request) error
 ```
 
-## type [Middleware](<https://github.com/hashibuto/neko/blob/master/neko.go#L20>)
+## type [Middleware](<https://github.com/hashibuto/neko/blob/master/neko.go#L22>)
 
 ```go
 type Middleware func(next Handler) Handler
 ```
 
-## type [Neko](<https://github.com/hashibuto/neko/blob/master/neko.go#L22-L26>)
+## type [Neko](<https://github.com/hashibuto/neko/blob/master/neko.go#L24-L28>)
 
 ```go
 type Neko struct {
@@ -135,7 +136,7 @@ type Neko struct {
 }
 ```
 
-### func [NewServer](<https://github.com/hashibuto/neko/blob/master/neko.go#L29>)
+### func [NewServer](<https://github.com/hashibuto/neko/blob/master/neko.go#L31>)
 
 ```go
 func NewServer(server *http.Server) (*Neko, error)
@@ -143,7 +144,7 @@ func NewServer(server *http.Server) (*Neko, error)
 
 NewServer returns a new Neko instance
 
-### func \(\*Neko\) [Route](<https://github.com/hashibuto/neko/blob/master/neko.go#L51>)
+### func \(\*Neko\) [Route](<https://github.com/hashibuto/neko/blob/master/neko.go#L53>)
 
 ```go
 func (n *Neko) Route(routePath string) *Route
@@ -151,7 +152,7 @@ func (n *Neko) Route(routePath string) *Route
 
 Route adds a complete match route to the server, route matching is independent of the order in which the route was added
 
-### func \(\*Neko\) [RoutePrefix](<https://github.com/hashibuto/neko/blob/master/neko.go#L57>)
+### func \(\*Neko\) [RoutePrefix](<https://github.com/hashibuto/neko/blob/master/neko.go#L59>)
 
 ```go
 func (n *Neko) RoutePrefix(routePath string) *Route
@@ -159,7 +160,7 @@ func (n *Neko) RoutePrefix(routePath string) *Route
 
 RoutePrefix adds a prefix match route to the server, route matching is independent of the order in which the route was added
 
-### func \(\*Neko\) [Serve](<https://github.com/hashibuto/neko/blob/master/neko.go#L62>)
+### func \(\*Neko\) [Serve](<https://github.com/hashibuto/neko/blob/master/neko.go#L64>)
 
 ```go
 func (n *Neko) Serve() error
@@ -167,13 +168,13 @@ func (n *Neko) Serve() error
 
 Serve initiates a blocking call which serves connections until interrupted
 
-### func \(\*Neko\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/neko.go#L75>)
+### func \(\*Neko\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/neko.go#L93>)
 
 ```go
 func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request)
 ```
 
-### func \(\*Neko\) [ServeTLS](<https://github.com/hashibuto/neko/blob/master/neko.go#L69>)
+### func \(\*Neko\) [ServeTLS](<https://github.com/hashibuto/neko/blob/master/neko.go#L71>)
 
 ```go
 func (n *Neko) ServeTLS(certFile string, keyFile string) error
@@ -181,7 +182,15 @@ func (n *Neko) ServeTLS(certFile string, keyFile string) error
 
 ServeTLS initiates a blocking call which serves connections over TLS until interrupted
 
-### func \(\*Neko\) [Use](<https://github.com/hashibuto/neko/blob/master/neko.go#L45>)
+### func \(\*Neko\) [UnwrapStatusError](<https://github.com/hashibuto/neko/blob/master/neko.go#L78>)
+
+```go
+func (n *Neko) UnwrapStatusError(err error) *StatusErr
+```
+
+UnwrapStatusError unwraps err as a status error if it contains one, or returns nil
+
+### func \(\*Neko\) [Use](<https://github.com/hashibuto/neko/blob/master/neko.go#L47>)
 
 ```go
 func (n *Neko) Use(mw Middleware)
