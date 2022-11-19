@@ -26,7 +26,6 @@ import "github.com/hashibuto/neko"
   - [func (n *Neko) Serve() error](<#func-neko-serve>)
   - [func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request)](<#func-neko-servehttp>)
   - [func (n *Neko) ServeTLS(certFile string, keyFile string) error](<#func-neko-servetls>)
-  - [func (n *Neko) UnwrapStatusError(err error) *StatusErr](<#func-neko-unwrapstatuserror>)
   - [func (n *Neko) Use(mw Middleware)](<#func-neko-use>)
 - [type PathToken](<#type-pathtoken>)
 - [type ResponseWriter](<#type-responsewriter>)
@@ -50,6 +49,7 @@ import "github.com/hashibuto/neko"
   - [func (rn *RouterNode) FindMatches(tokens []string, matches []*Route) []*Route](<#func-routernode-findmatches>)
 - [type StatusErr](<#type-statuserr>)
   - [func NewStatusErrf(statusCode int, format string, a ...any) *StatusErr](<#func-newstatuserrf>)
+  - [func UnwrapStatusError(err error) *StatusErr](<#func-unwrapstatuserror>)
   - [func (se *StatusErr) Error() string](<#func-statuserr-error>)
 
 
@@ -59,7 +59,7 @@ import "github.com/hashibuto/neko"
 var VERSION string
 ```
 
-## func [GetStatusCode](<https://github.com/hashibuto/neko/blob/master/utils.go#L15>)
+## func [GetStatusCode](<https://github.com/hashibuto/neko/blob/master/utils.go#L17>)
 
 ```go
 func GetStatusCode(w http.ResponseWriter, err error) int
@@ -67,7 +67,7 @@ func GetStatusCode(w http.ResponseWriter, err error) int
 
 GetStatusCode returns the response status code to the present moment in time
 
-## func [IsResponseError](<https://github.com/hashibuto/neko/blob/master/utils.go#L34>)
+## func [IsResponseError](<https://github.com/hashibuto/neko/blob/master/utils.go#L52>)
 
 ```go
 func IsResponseError(w http.ResponseWriter, err error) bool
@@ -75,7 +75,7 @@ func IsResponseError(w http.ResponseWriter, err error) bool
 
 IsResponseError returns the state of the application response with respect to error at the present time
 
-## func [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/utils.go#L8>)
+## func [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/utils.go#L10>)
 
 ```go
 func ParsePathTokens(r *http.Request) map[string]any
@@ -121,13 +121,13 @@ type HandlerStruct struct {
 func (hs *HandlerStruct) ServeHTTP(w http.ResponseWriter, r *http.Request) error
 ```
 
-## type [Middleware](<https://github.com/hashibuto/neko/blob/master/neko.go#L22>)
+## type [Middleware](<https://github.com/hashibuto/neko/blob/master/neko.go#L19>)
 
 ```go
 type Middleware func(next Handler) Handler
 ```
 
-## type [Neko](<https://github.com/hashibuto/neko/blob/master/neko.go#L24-L28>)
+## type [Neko](<https://github.com/hashibuto/neko/blob/master/neko.go#L21-L25>)
 
 ```go
 type Neko struct {
@@ -136,7 +136,7 @@ type Neko struct {
 }
 ```
 
-### func [NewServer](<https://github.com/hashibuto/neko/blob/master/neko.go#L31>)
+### func [NewServer](<https://github.com/hashibuto/neko/blob/master/neko.go#L28>)
 
 ```go
 func NewServer(server *http.Server) (*Neko, error)
@@ -144,7 +144,7 @@ func NewServer(server *http.Server) (*Neko, error)
 
 NewServer returns a new Neko instance
 
-### func \(\*Neko\) [Route](<https://github.com/hashibuto/neko/blob/master/neko.go#L53>)
+### func \(\*Neko\) [Route](<https://github.com/hashibuto/neko/blob/master/neko.go#L50>)
 
 ```go
 func (n *Neko) Route(routePath string) *Route
@@ -152,7 +152,7 @@ func (n *Neko) Route(routePath string) *Route
 
 Route adds a complete match route to the server, route matching is independent of the order in which the route was added
 
-### func \(\*Neko\) [RoutePrefix](<https://github.com/hashibuto/neko/blob/master/neko.go#L59>)
+### func \(\*Neko\) [RoutePrefix](<https://github.com/hashibuto/neko/blob/master/neko.go#L56>)
 
 ```go
 func (n *Neko) RoutePrefix(routePath string) *Route
@@ -160,7 +160,7 @@ func (n *Neko) RoutePrefix(routePath string) *Route
 
 RoutePrefix adds a prefix match route to the server, route matching is independent of the order in which the route was added
 
-### func \(\*Neko\) [Serve](<https://github.com/hashibuto/neko/blob/master/neko.go#L64>)
+### func \(\*Neko\) [Serve](<https://github.com/hashibuto/neko/blob/master/neko.go#L61>)
 
 ```go
 func (n *Neko) Serve() error
@@ -168,13 +168,13 @@ func (n *Neko) Serve() error
 
 Serve initiates a blocking call which serves connections until interrupted
 
-### func \(\*Neko\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/neko.go#L93>)
+### func \(\*Neko\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/neko.go#L74>)
 
 ```go
 func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request)
 ```
 
-### func \(\*Neko\) [ServeTLS](<https://github.com/hashibuto/neko/blob/master/neko.go#L71>)
+### func \(\*Neko\) [ServeTLS](<https://github.com/hashibuto/neko/blob/master/neko.go#L68>)
 
 ```go
 func (n *Neko) ServeTLS(certFile string, keyFile string) error
@@ -182,15 +182,7 @@ func (n *Neko) ServeTLS(certFile string, keyFile string) error
 
 ServeTLS initiates a blocking call which serves connections over TLS until interrupted
 
-### func \(\*Neko\) [UnwrapStatusError](<https://github.com/hashibuto/neko/blob/master/neko.go#L78>)
-
-```go
-func (n *Neko) UnwrapStatusError(err error) *StatusErr
-```
-
-UnwrapStatusError unwraps err as a status error if it contains one, or returns nil
-
-### func \(\*Neko\) [Use](<https://github.com/hashibuto/neko/blob/master/neko.go#L47>)
+### func \(\*Neko\) [Use](<https://github.com/hashibuto/neko/blob/master/neko.go#L44>)
 
 ```go
 func (n *Neko) Use(mw Middleware)
@@ -347,6 +339,14 @@ type StatusErr struct {
 ```go
 func NewStatusErrf(statusCode int, format string, a ...any) *StatusErr
 ```
+
+### func [UnwrapStatusError](<https://github.com/hashibuto/neko/blob/master/utils.go#L36>)
+
+```go
+func UnwrapStatusError(err error) *StatusErr
+```
+
+UnwrapStatusError unwraps err as a status error if it contains one, or returns nil
 
 ### func \(\*StatusErr\) [Error](<https://github.com/hashibuto/neko/blob/master/errors.go#L17>)
 

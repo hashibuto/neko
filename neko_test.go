@@ -1,6 +1,7 @@
 package neko
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -23,34 +24,22 @@ func TestSpecifiedHandler(t *testing.T) {
 
 func TestStatusErrorUnwrap(t *testing.T) {
 	e := NewStatusErrf(401, "Unauthorized")
-	s, err := NewServer(&http.Server{
-		Addr: "localhost:8888",
-	})
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	if s.UnwrapStatusError(e) == nil {
+	if UnwrapStatusError(e) == nil {
 		t.Error("Should not be nil")
 		return
 	}
 }
 
 func TestStatusDoubleErrorUnwrap(t *testing.T) {
-	e := oof.Trace(NewStatusErrf(401, "Unauthorized"))
-	s, err := NewServer(&http.Server{
-		Addr: "localhost:8888",
-	})
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	e := oof.Trace(oof.Trace(NewStatusErrf(401, "Unauthorized")))
+	val := UnwrapStatusError(e)
 
-	if s.UnwrapStatusError(e) == nil {
+	if val == nil {
 		t.Error("Should not be nil")
 		return
 	}
+
+	fmt.Println(val.StatusCode)
 }
 
 // func TestServe(t *testing.T) {

@@ -3,11 +3,8 @@ package neko
 import (
 	"context"
 	_ "embed"
-	"errors"
 	"fmt"
 	"net/http"
-
-	"github.com/hashibuto/oof"
 )
 
 //go:embed VERSION
@@ -74,22 +71,6 @@ func (n *Neko) ServeTLS(certFile string, keyFile string) error {
 	return n.Server.ListenAndServeTLS(certFile, keyFile)
 }
 
-// UnwrapStatusError unwraps err as a status error if it contains one, or returns nil
-func (n *Neko) UnwrapStatusError(err error) *StatusErr {
-	var sErr *StatusErr
-	var oofErr *oof.OofError
-	if errors.As(err, &sErr) {
-		return sErr
-	}
-
-	if errors.As(err, &oofErr) {
-		if errors.As(oofErr.OrigError, &sErr) {
-			return sErr
-		}
-	}
-	return nil
-}
-
 func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	route := n.router.FindMatch(r.URL.Path)
 	if route == nil {
@@ -99,7 +80,7 @@ func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	err := route.ServeHTTP(NewResponseWriter(w), r.WithContext(context.WithValue(r.Context(), routeKey, route)))
 	if err != nil {
-		statusErr := n.UnwrapStatusError(err)
+		statusErr := UnwrapStatusError(err)
 		if statusErr != nil {
 			w.WriteHeader(statusErr.StatusCode)
 		} else {
