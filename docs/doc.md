@@ -26,6 +26,7 @@ import "github.com/hashibuto/neko"
   - [func (n *Neko) Serve() error](<#func-neko-serve>)
   - [func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request)](<#func-neko-servehttp>)
   - [func (n *Neko) ServeTLS(certFile string, keyFile string) error](<#func-neko-servetls>)
+  - [func (n *Neko) UnwrapStatusError(err error) *StatusErr](<#func-neko-unwrapstatuserror>)
   - [func (n *Neko) Use(mw Middleware)](<#func-neko-use>)
 - [type PathToken](<#type-pathtoken>)
 - [type ResponseWriter](<#type-responsewriter>)
@@ -37,6 +38,7 @@ import "github.com/hashibuto/neko"
   - [func (rt *Route) Handler(handler Handler, methods ...string) *Route](<#func-route-handler>)
   - [func (rt *Route) HandlerFunc(handlerFunc HandlerFunc, methods ...string) *Route](<#func-route-handlerfunc>)
   - [func (rt *Route) Middleware(middlewares ...Middleware) *Route](<#func-route-middleware>)
+  - [func (rt *Route) ParsePathTokens(path string) map[string]any](<#func-route-parsepathtokens>)
   - [func (rt *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) error](<#func-route-servehttp>)
 - [type Router](<#type-router>)
   - [func NewRouter() *Router](<#func-newrouter>)
@@ -57,7 +59,7 @@ import "github.com/hashibuto/neko"
 var VERSION string
 ```
 
-## func [GetStatusCode](<https://github.com/hashibuto/neko/blob/master/utils.go#L31>)
+## func [GetStatusCode](<https://github.com/hashibuto/neko/blob/master/utils.go#L15>)
 
 ```go
 func GetStatusCode(w http.ResponseWriter, err error) int
@@ -65,7 +67,7 @@ func GetStatusCode(w http.ResponseWriter, err error) int
 
 GetStatusCode returns the response status code to the present moment in time
 
-## func [IsResponseError](<https://github.com/hashibuto/neko/blob/master/utils.go#L50>)
+## func [IsResponseError](<https://github.com/hashibuto/neko/blob/master/utils.go#L34>)
 
 ```go
 func IsResponseError(w http.ResponseWriter, err error) bool
@@ -73,7 +75,7 @@ func IsResponseError(w http.ResponseWriter, err error) bool
 
 IsResponseError returns the state of the application response with respect to error at the present time
 
-## func [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/utils.go#L10>)
+## func [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/utils.go#L8>)
 
 ```go
 func ParsePathTokens(r *http.Request) map[string]any
@@ -119,13 +121,13 @@ type HandlerStruct struct {
 func (hs *HandlerStruct) ServeHTTP(w http.ResponseWriter, r *http.Request) error
 ```
 
-## type [Middleware](<https://github.com/hashibuto/neko/blob/master/neko.go#L20>)
+## type [Middleware](<https://github.com/hashibuto/neko/blob/master/neko.go#L22>)
 
 ```go
 type Middleware func(next Handler) Handler
 ```
 
-## type [Neko](<https://github.com/hashibuto/neko/blob/master/neko.go#L22-L26>)
+## type [Neko](<https://github.com/hashibuto/neko/blob/master/neko.go#L24-L28>)
 
 ```go
 type Neko struct {
@@ -134,7 +136,7 @@ type Neko struct {
 }
 ```
 
-### func [NewServer](<https://github.com/hashibuto/neko/blob/master/neko.go#L29>)
+### func [NewServer](<https://github.com/hashibuto/neko/blob/master/neko.go#L31>)
 
 ```go
 func NewServer(server *http.Server) (*Neko, error)
@@ -142,7 +144,7 @@ func NewServer(server *http.Server) (*Neko, error)
 
 NewServer returns a new Neko instance
 
-### func \(\*Neko\) [Route](<https://github.com/hashibuto/neko/blob/master/neko.go#L51>)
+### func \(\*Neko\) [Route](<https://github.com/hashibuto/neko/blob/master/neko.go#L53>)
 
 ```go
 func (n *Neko) Route(routePath string) *Route
@@ -150,7 +152,7 @@ func (n *Neko) Route(routePath string) *Route
 
 Route adds a complete match route to the server, route matching is independent of the order in which the route was added
 
-### func \(\*Neko\) [RoutePrefix](<https://github.com/hashibuto/neko/blob/master/neko.go#L57>)
+### func \(\*Neko\) [RoutePrefix](<https://github.com/hashibuto/neko/blob/master/neko.go#L59>)
 
 ```go
 func (n *Neko) RoutePrefix(routePath string) *Route
@@ -158,7 +160,7 @@ func (n *Neko) RoutePrefix(routePath string) *Route
 
 RoutePrefix adds a prefix match route to the server, route matching is independent of the order in which the route was added
 
-### func \(\*Neko\) [Serve](<https://github.com/hashibuto/neko/blob/master/neko.go#L62>)
+### func \(\*Neko\) [Serve](<https://github.com/hashibuto/neko/blob/master/neko.go#L64>)
 
 ```go
 func (n *Neko) Serve() error
@@ -166,13 +168,13 @@ func (n *Neko) Serve() error
 
 Serve initiates a blocking call which serves connections until interrupted
 
-### func \(\*Neko\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/neko.go#L75>)
+### func \(\*Neko\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/neko.go#L93>)
 
 ```go
 func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request)
 ```
 
-### func \(\*Neko\) [ServeTLS](<https://github.com/hashibuto/neko/blob/master/neko.go#L69>)
+### func \(\*Neko\) [ServeTLS](<https://github.com/hashibuto/neko/blob/master/neko.go#L71>)
 
 ```go
 func (n *Neko) ServeTLS(certFile string, keyFile string) error
@@ -180,7 +182,15 @@ func (n *Neko) ServeTLS(certFile string, keyFile string) error
 
 ServeTLS initiates a blocking call which serves connections over TLS until interrupted
 
-### func \(\*Neko\) [Use](<https://github.com/hashibuto/neko/blob/master/neko.go#L45>)
+### func \(\*Neko\) [UnwrapStatusError](<https://github.com/hashibuto/neko/blob/master/neko.go#L78>)
+
+```go
+func (n *Neko) UnwrapStatusError(err error) *StatusErr
+```
+
+UnwrapStatusError unwraps err as a status error if it contains one, or returns nil
+
+### func \(\*Neko\) [Use](<https://github.com/hashibuto/neko/blob/master/neko.go#L47>)
 
 ```go
 func (n *Neko) Use(mw Middleware)
@@ -188,7 +198,7 @@ func (n *Neko) Use(mw Middleware)
 
 Use applies the target middleware to all routes added after invocation of the command.  Routes added prior to invoking "Use" will not invoke the middleware.
 
-## type [PathToken](<https://github.com/hashibuto/neko/blob/master/route.go#L45-L48>)
+## type [PathToken](<https://github.com/hashibuto/neko/blob/master/route.go#L46-L49>)
 
 ```go
 type PathToken struct {
@@ -231,7 +241,7 @@ func (rw *ResponseWriter) WriteHeader(statusCode int)
 func (rw *ResponseWriter) WroteHeader() bool
 ```
 
-## type [Route](<https://github.com/hashibuto/neko/blob/master/route.go#L50-L58>)
+## type [Route](<https://github.com/hashibuto/neko/blob/master/route.go#L51-L59>)
 
 ```go
 type Route struct {
@@ -239,31 +249,37 @@ type Route struct {
 }
 ```
 
-### func \(\*Route\) [Handler](<https://github.com/hashibuto/neko/blob/master/route.go#L101>)
+### func \(\*Route\) [Handler](<https://github.com/hashibuto/neko/blob/master/route.go#L120>)
 
 ```go
 func (rt *Route) Handler(handler Handler, methods ...string) *Route
 ```
 
-### func \(\*Route\) [HandlerFunc](<https://github.com/hashibuto/neko/blob/master/route.go#L83>)
+### func \(\*Route\) [HandlerFunc](<https://github.com/hashibuto/neko/blob/master/route.go#L102>)
 
 ```go
 func (rt *Route) HandlerFunc(handlerFunc HandlerFunc, methods ...string) *Route
 ```
 
-### func \(\*Route\) [Middleware](<https://github.com/hashibuto/neko/blob/master/route.go#L73>)
+### func \(\*Route\) [Middleware](<https://github.com/hashibuto/neko/blob/master/route.go#L74>)
 
 ```go
 func (rt *Route) Middleware(middlewares ...Middleware) *Route
 ```
 
-### func \(\*Route\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/route.go#L60>)
+### func \(\*Route\) [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/route.go#L84>)
+
+```go
+func (rt *Route) ParsePathTokens(path string) map[string]any
+```
+
+### func \(\*Route\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/route.go#L61>)
 
 ```go
 func (rt *Route) ServeHTTP(w http.ResponseWriter, r *http.Request) error
 ```
 
-## type [Router](<https://github.com/hashibuto/neko/blob/master/route.go#L119-L123>)
+## type [Router](<https://github.com/hashibuto/neko/blob/master/route.go#L138-L142>)
 
 ```go
 type Router struct {
@@ -271,25 +287,25 @@ type Router struct {
 }
 ```
 
-### func [NewRouter](<https://github.com/hashibuto/neko/blob/master/route.go#L156>)
+### func [NewRouter](<https://github.com/hashibuto/neko/blob/master/route.go#L175>)
 
 ```go
 func NewRouter() *Router
 ```
 
-### func \(\*Router\) [AddMiddleware](<https://github.com/hashibuto/neko/blob/master/route.go#L164>)
+### func \(\*Router\) [AddMiddleware](<https://github.com/hashibuto/neko/blob/master/route.go#L183>)
 
 ```go
 func (r *Router) AddMiddleware(mw Middleware)
 ```
 
-### func \(\*Router\) [AddRoute](<https://github.com/hashibuto/neko/blob/master/route.go#L168>)
+### func \(\*Router\) [AddRoute](<https://github.com/hashibuto/neko/blob/master/route.go#L187>)
 
 ```go
 func (r *Router) AddRoute(routePath string, isPrefix bool) *Route
 ```
 
-### func \(\*Router\) [FindMatch](<https://github.com/hashibuto/neko/blob/master/route.go#L272>)
+### func \(\*Router\) [FindMatch](<https://github.com/hashibuto/neko/blob/master/route.go#L291>)
 
 ```go
 func (r *Router) FindMatch(candidate string) *Route
@@ -297,7 +313,7 @@ func (r *Router) FindMatch(candidate string) *Route
 
 FindMatch looks through the routing entries for the most specific match against the candidate.  If a match cannot be established then nil is returned
 
-## type [RouterNode](<https://github.com/hashibuto/neko/blob/master/route.go#L125-L128>)
+## type [RouterNode](<https://github.com/hashibuto/neko/blob/master/route.go#L144-L147>)
 
 ```go
 type RouterNode struct {
@@ -305,13 +321,13 @@ type RouterNode struct {
 }
 ```
 
-### func [NewRouterNode](<https://github.com/hashibuto/neko/blob/master/route.go#L149>)
+### func [NewRouterNode](<https://github.com/hashibuto/neko/blob/master/route.go#L168>)
 
 ```go
 func NewRouterNode() *RouterNode
 ```
 
-### func \(\*RouterNode\) [FindMatches](<https://github.com/hashibuto/neko/blob/master/route.go#L130>)
+### func \(\*RouterNode\) [FindMatches](<https://github.com/hashibuto/neko/blob/master/route.go#L149>)
 
 ```go
 func (rn *RouterNode) FindMatches(tokens []string, matches []*Route) []*Route

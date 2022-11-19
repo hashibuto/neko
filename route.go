@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -78,6 +79,24 @@ func (rt *Route) Middleware(middlewares ...Middleware) *Route {
 	rt.middlewares = append(rt.middlewares, middlewares...)
 
 	return rt
+}
+
+func (rt *Route) ParsePathTokens(path string) map[string]any {
+	mapping := map[string]any{}
+	matches := rt.pathRegex.FindStringSubmatch(path)
+	if matches != nil {
+		for tokenIdx, match := range matches[1:] {
+			token := rt.pathTokens[tokenIdx]
+			if token.kind == reflect.Int {
+				// Ignore errors and treat as zero value if incorrect type
+				value, _ := strconv.Atoi(match)
+				mapping[token.name] = value
+			} else {
+				mapping[token.name] = match
+			}
+		}
+	}
+	return mapping
 }
 
 func (rt *Route) HandlerFunc(handlerFunc HandlerFunc, methods ...string) *Route {
