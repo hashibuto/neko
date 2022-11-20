@@ -59,7 +59,7 @@ import "github.com/hashibuto/neko"
 var VERSION string
 ```
 
-## func [GetStatusCode](<https://github.com/hashibuto/neko/blob/master/utils.go#L17>)
+## func [GetStatusCode](<https://github.com/hashibuto/neko/blob/master/utils.go#L15>)
 
 ```go
 func GetStatusCode(w http.ResponseWriter, err error) int
@@ -67,7 +67,7 @@ func GetStatusCode(w http.ResponseWriter, err error) int
 
 GetStatusCode returns the response status code to the present moment in time
 
-## func [IsResponseError](<https://github.com/hashibuto/neko/blob/master/utils.go#L52>)
+## func [IsResponseError](<https://github.com/hashibuto/neko/blob/master/utils.go#L44>)
 
 ```go
 func IsResponseError(w http.ResponseWriter, err error) bool
@@ -75,7 +75,7 @@ func IsResponseError(w http.ResponseWriter, err error) bool
 
 IsResponseError returns the state of the application response with respect to error at the present time
 
-## func [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/utils.go#L10>)
+## func [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/utils.go#L8>)
 
 ```go
 func ParsePathTokens(r *http.Request) map[string]any
@@ -340,7 +340,7 @@ type StatusErr struct {
 func NewStatusErrf(statusCode int, format string, a ...any) *StatusErr
 ```
 
-### func [UnwrapStatusError](<https://github.com/hashibuto/neko/blob/master/utils.go#L36>)
+### func [UnwrapStatusError](<https://github.com/hashibuto/neko/blob/master/utils.go#L34>)
 
 ```go
 func UnwrapStatusError(err error) *StatusErr
