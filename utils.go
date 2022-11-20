@@ -3,8 +3,6 @@ package neko
 import (
 	"errors"
 	"net/http"
-
-	"github.com/hashibuto/oof"
 )
 
 func ParsePathTokens(r *http.Request) map[string]any {
@@ -35,16 +33,10 @@ func GetStatusCode(w http.ResponseWriter, err error) int {
 // UnwrapStatusError unwraps err as a status error if it contains one, or returns nil
 func UnwrapStatusError(err error) *StatusErr {
 	var sErr *StatusErr
-	var oofErr *oof.OofError
 	if errors.As(err, &sErr) {
 		return sErr
 	}
 
-	if errors.As(err, &oofErr) {
-		if errors.As(oofErr.OrigError, &sErr) {
-			return sErr
-		}
-	}
 	return nil
 }
 
