@@ -5,10 +5,18 @@ import (
 	"net/http"
 )
 
+// ParsePathTokens parses path tokens out of the supplied path, according to the route matching path template
 func ParsePathTokens(r *http.Request) map[string]any {
 	routeVal := r.Context().Value(routeKey)
 	route := routeVal.(*Route)
 	return route.ParsePathTokens(r.URL.Path)
+}
+
+// GetPathTemplate returns the path template used to route the actual path.  Eg: "/entity/123" would be "/entity/{id}"
+func GetPathTemplate(r *http.Request) string {
+	routeVal := r.Context().Value(routeKey)
+	route := routeVal.(*Route)
+	return route.path
 }
 
 // GetStatusCode returns the response status code to the present moment in time
