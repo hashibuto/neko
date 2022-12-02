@@ -14,7 +14,7 @@ func RequestLogger(next neko.Handler) neko.Handler {
 	return neko.MakeHandler(func(w http.ResponseWriter, r *http.Request) error {
 		query := r.URL.Path
 		if r.URL.RawQuery != "" {
-			query = "?" + r.URL.RawQuery
+			query += "?" + r.URL.RawQuery
 		}
 
 		now := time.Now().UTC()
