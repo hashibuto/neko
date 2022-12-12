@@ -78,13 +78,14 @@ func (n *Neko) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := route.ServeHTTP(NewResponseWriter(w), r.WithContext(context.WithValue(r.Context(), routeKey, route)))
+	respW := NewResponseWriter(w)
+	err := route.ServeHTTP(respW, r.WithContext(context.WithValue(r.Context(), routeKey, route)))
 	if err != nil {
 		statusErr := UnwrapStatusError(err)
 		if statusErr != nil {
-			w.WriteHeader(statusErr.StatusCode)
+			respW.WriteHeader(statusErr.StatusCode)
 		} else {
-			w.WriteHeader(500)
+			respW.WriteHeader(500)
 		}
 	}
 }
