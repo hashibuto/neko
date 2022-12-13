@@ -19,6 +19,9 @@ import "github.com/hashibuto/neko"
 - [type HandlerFunc](<#type-handlerfunc>)
 - [type HandlerStruct](<#type-handlerstruct>)
   - [func (hs *HandlerStruct) ServeHTTP(w http.ResponseWriter, r *http.Request) error](<#func-handlerstruct-servehttp>)
+- [type HandlerWrapper](<#type-handlerwrapper>)
+  - [func WrapStandardHandler(handler http.Handler) *HandlerWrapper](<#func-wrapstandardhandler>)
+  - [func (hw *HandlerWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) error](<#func-handlerwrapper-servehttp>)
 - [type Middleware](<#type-middleware>)
 - [type Neko](<#type-neko>)
   - [func NewServer(server *http.Server) (*Neko, error)](<#func-newserver>)
@@ -60,7 +63,7 @@ import "github.com/hashibuto/neko"
 var VERSION string
 ```
 
-## func [GetPathTemplate](<https://github.com/hashibuto/neko/blob/master/utils.go#L16>)
+## func [GetPathTemplate](<https://github.com/hashibuto/neko/blob/master/utils.go#L26>)
 
 ```go
 func GetPathTemplate(r *http.Request) string
@@ -68,7 +71,7 @@ func GetPathTemplate(r *http.Request) string
 
 GetPathTemplate returns the path template used to route the actual path.  Eg: "/entity/123" would be "/entity/\{id\}"
 
-## func [GetStatusCode](<https://github.com/hashibuto/neko/blob/master/utils.go#L23>)
+## func [GetStatusCode](<https://github.com/hashibuto/neko/blob/master/utils.go#L33>)
 
 ```go
 func GetStatusCode(w http.ResponseWriter, err error) int
@@ -76,7 +79,7 @@ func GetStatusCode(w http.ResponseWriter, err error) int
 
 GetStatusCode returns the response status code to the present moment in time
 
-## func [IsResponseError](<https://github.com/hashibuto/neko/blob/master/utils.go#L52>)
+## func [IsResponseError](<https://github.com/hashibuto/neko/blob/master/utils.go#L62>)
 
 ```go
 func IsResponseError(w http.ResponseWriter, err error) bool
@@ -84,7 +87,7 @@ func IsResponseError(w http.ResponseWriter, err error) bool
 
 IsResponseError returns the state of the application response with respect to error at the present time
 
-## func [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/utils.go#L9>)
+## func [ParsePathTokens](<https://github.com/hashibuto/neko/blob/master/utils.go#L19>)
 
 ```go
 func ParsePathTokens(r *http.Request) map[string]any
@@ -131,6 +134,30 @@ type HandlerStruct struct {
 ```go
 func (hs *HandlerStruct) ServeHTTP(w http.ResponseWriter, r *http.Request) error
 ```
+
+## type [HandlerWrapper](<https://github.com/hashibuto/neko/blob/master/utils.go#L8-L10>)
+
+```go
+type HandlerWrapper struct {
+    // contains filtered or unexported fields
+}
+```
+
+### func [WrapStandardHandler](<https://github.com/hashibuto/neko/blob/master/utils.go#L90>)
+
+```go
+func WrapStandardHandler(handler http.Handler) *HandlerWrapper
+```
+
+WrapStandardHandler wraps a standard http.Handler and returns a neko handler
+
+### func \(\*HandlerWrapper\) [ServeHTTP](<https://github.com/hashibuto/neko/blob/master/utils.go#L13>)
+
+```go
+func (hw *HandlerWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) error
+```
+
+ServeHTTP calls the original ServeHTTP method while providing a nil error response
 
 ## type [Middleware](<https://github.com/hashibuto/neko/blob/master/neko.go#L19>)
 
@@ -351,7 +378,7 @@ type StatusErr struct {
 func NewStatusErrf(statusCode int, format string, a ...any) *StatusErr
 ```
 
-### func [UnwrapStatusError](<https://github.com/hashibuto/neko/blob/master/utils.go#L42>)
+### func [UnwrapStatusError](<https://github.com/hashibuto/neko/blob/master/utils.go#L52>)
 
 ```go
 func UnwrapStatusError(err error) *StatusErr

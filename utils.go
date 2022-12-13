@@ -5,6 +5,16 @@ import (
 	"net/http"
 )
 
+type HandlerWrapper struct {
+	originalHandler http.Handler
+}
+
+// ServeHTTP calls the original ServeHTTP method while providing a nil error response
+func (hw *HandlerWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) error {
+	hw.originalHandler.ServeHTTP(w, r)
+	return nil
+}
+
 // ParsePathTokens parses path tokens out of the supplied path, according to the route matching path template
 func ParsePathTokens(r *http.Request) map[string]any {
 	routeVal := r.Context().Value(routeKey)
@@ -74,4 +84,11 @@ func IsResponseError(w http.ResponseWriter, err error) bool {
 	}
 
 	return false
+}
+
+// WrapStandardHandler wraps a standard http.Handler and returns a neko handler
+func WrapStandardHandler(handler http.Handler) *HandlerWrapper {
+	return &HandlerWrapper{
+		originalHandler: handler,
+	}
 }
